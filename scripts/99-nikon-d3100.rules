@@ -1,0 +1,5 @@
+# Udev rule for Nikon D3100 DSLR PTP USB communication
+# Grants non-root access to users in 'plugdev' group
+
+SUBSYSTEM=="usb", ATTR{idVendor}=="04b0", ATTR{idProduct}=="0427", MODE="0666", GROUP="plugdev", ENV{ID_GPHOTO2}="1", ENV{GPHOTO2_DRIVER}="PTP"
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="04b0", ATTR{idProduct}=="0427", RUN+="/usr/bin/pkill -f gvfsd-gphoto2"

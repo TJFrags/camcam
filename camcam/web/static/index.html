@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CamCam - Nikon D3100 Quick Settings & Remote Shutter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Top Navigation & Status Bar -->
+    <header class="app-header">
+      <div class="brand-group">
+        <div class="brand-logo">
+          <span class="logo-icon">📷</span>
+          <span class="logo-pulse"></span>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">CamCam <span class="badge-tag">USB Shutter</span></h1>
+          <p class="brand-subtitle">Nikon D3100 Remote Trigger (SD Card Storage)</p>
+        </div>
+      </div>
+
+      <div class="header-status-group">
+        <div id="camera-status-pill" class="status-pill status-loading">
+          <span class="status-indicator"></span>
+          <span id="camera-status-text" class="status-label">Detecting Camera...</span>
+        </div>
+        <button id="btn-reconnect" class="icon-btn" title="Reconnect Camera" aria-label="Reconnect Camera">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+
+      <!-- ================================================================= -->
+      <!-- 1. QUICK SETTINGS SECTION                                         -->
+      <!-- ================================================================= -->
+      <section class="panel quick-settings-panel">
+        <div class="panel-header">
+          <div class="panel-title-wrapper">
+            <span class="panel-icon">⚡</span>
+            <h2 class="panel-heading">Quick Settings</h2>
+          </div>
+          <span class="panel-subtitle">Direct Hardware Adjustments</span>
+        </div>
+
+        <!-- Presets Row -->
+        <div class="setting-group presets-group">
+          <label class="setting-label">Shooting Presets</label>
+          <div class="preset-pills" id="preset-pills">
+            <button class="preset-pill active" data-preset="Auto">⚡ Auto</button>
+            <button class="preset-pill" data-preset="Action">🏃 Action</button>
+            <button class="preset-pill" data-preset="Portrait">👤 Portrait</button>
+            <button class="preset-pill" data-preset="Landscape">🏔️ Landscape</button>
+            <button class="preset-pill" data-preset="Night">🌙 Night</button>
+            <button class="preset-pill" data-preset="Studio">💡 Studio</button>
+          </div>
+        </div>
+
+        <!-- ISO Selector -->
+        <div class="setting-group">
+          <div class="setting-header-row">
+            <label class="setting-label">ISO Sensitivity</label>
+            <span class="setting-val-badge" id="val-badge-iso">Auto</span>
+          </div>
+          <div class="pill-slider-container" id="iso-pills">
+            <button class="chip-pill active" data-value="Auto">Auto</button>
+            <button class="chip-pill" data-value="100">100</button>
+            <button class="chip-pill" data-value="200">200</button>
+            <button class="chip-pill" data-value="400">400</button>
+            <button class="chip-pill" data-value="800">800</button>
+            <button class="chip-pill" data-value="1600">1600</button>
+            <button class="chip-pill" data-value="3200">3200</button>
+            <button class="chip-pill" data-value="6400">6400</button>
+          </div>
+        </div>
+
+        <!-- Shutter Speed Selector -->
+        <div class="setting-group">
+          <div class="setting-header-row">
+            <label class="setting-label">Shutter Speed</label>
+            <span class="setting-val-badge" id="val-badge-shutter">1/125</span>
+          </div>
+          <div class="pill-slider-container" id="shutter-pills">
+            <button class="chip-pill" data-value="1/4000">1/4000</button>
+            <button class="chip-pill" data-value="1/2000">1/2000</button>
+            <button class="chip-pill" data-value="1/1000">1/1000</button>
+            <button class="chip-pill" data-value="1/500">1/500</button>
+            <button class="chip-pill" data-value="1/250">1/250</button>
+            <button class="chip-pill active" data-value="1/125">1/125</button>
+            <button class="chip-pill" data-value="1/60">1/60</button>
+            <button class="chip-pill" data-value="1/30">1/30</button>
+            <button class="chip-pill" data-value="1/15">1/15</button>
+            <button class="chip-pill" data-value="1/8">1/8</button>
+            <button class="chip-pill" data-value="1/4">1/4</button>
+            <button class="chip-pill" data-value="1/2">1/2</button>
+            <button class="chip-pill" data-value="1s">1s</button>
+            <button class="chip-pill" data-value="2s">2s</button>
+          </div>
+        </div>
+
+        <!-- Aperture Selector -->
+        <div class="setting-group">
+          <div class="setting-header-row">
+            <label class="setting-label">Aperture (f-stop)</label>
+            <span class="setting-val-badge" id="val-badge-aperture">f/5.6</span>
+          </div>
+          <div class="pill-slider-container" id="aperture-pills">
+            <button class="chip-pill" data-value="1.8">f/1.8</button>
+            <button class="chip-pill" data-value="2.8">f/2.8</button>
+            <button class="chip-pill" data-value="3.5">f/3.5</button>
+            <button class="chip-pill" data-value="4.0">f/4.0</button>
+            <button class="chip-pill active" data-value="5.6">f/5.6</button>
+            <button class="chip-pill" data-value="8.0">f/8.0</button>
+            <button class="chip-pill" data-value="11">f/11</button>
+            <button class="chip-pill" data-value="16">f/16</button>
+            <button class="chip-pill" data-value="22">f/22</button>
+          </div>
+        </div>
+
+        <!-- Exposure Compensation & Self-Timer Row -->
+        <div class="dual-settings-row">
+          <div class="setting-group half-width">
+            <div class="setting-header-row">
+              <label class="setting-label">Exposure Comp</label>
+              <span class="setting-val-badge" id="val-badge-ec">0 EV</span>
+            </div>
+            <div class="pill-slider-container compact" id="ec-pills">
+              <button class="chip-pill" data-value="-2.0">-2</button>
+              <button class="chip-pill" data-value="-1.0">-1</button>
+              <button class="chip-pill active" data-value="0">0</button>
+              <button class="chip-pill" data-value="+1.0">+1</button>
+              <button class="chip-pill" data-value="+2.0">+2</button>
+            </div>
+          </div>
+
+          <div class="setting-group half-width">
+            <div class="setting-header-row">
+              <label class="setting-label">Self-Timer</label>
+              <span class="setting-val-badge" id="val-badge-delay">0s</span>
+            </div>
+            <div class="pill-slider-container compact" id="delay-pills">
+              <button class="chip-pill active" data-value="0">0s</button>
+              <button class="chip-pill" data-value="2">2s</button>
+              <button class="chip-pill" data-value="5">5s</button>
+              <button class="chip-pill" data-value="10">10s</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- 2. SHUTTER & CAPTURE CONTROLS                                     -->
+      <!-- ================================================================= -->
+      <section class="panel shutter-panel">
+        <!-- Mode Tabs -->
+        <div class="mode-tabs">
+          <button class="mode-tab active" data-mode="single">Single Trigger</button>
+          <button class="mode-tab" data-mode="burst">Burst Trigger</button>
+          <button class="mode-tab" data-mode="timelapse">Intervalometer</button>
+        </div>
+
+        <!-- Single / Burst Shutter Arena -->
+        <div class="shutter-arena" id="shutter-arena">
+          <!-- Countdown Circle Overlay -->
+          <div class="countdown-display" id="countdown-display" style="display: none;">
+            <svg class="countdown-svg" viewBox="0 0 160 160">
+              <circle class="countdown-track" cx="80" cy="80" r="70" />
+              <circle class="countdown-fill" id="countdown-fill" cx="80" cy="80" r="70" />
+            </svg>
+            <span class="countdown-num" id="countdown-num">5</span>
+          </div>
+
+          <!-- Big Shutter Trigger Button -->
+          <button id="btn-shutter" class="shutter-button" aria-label="Trigger Shutter">
+            <div class="shutter-outer-ring">
+              <div class="shutter-inner-core">
+                <span class="shutter-icon">📸</span>
+                <span class="shutter-text" id="shutter-btn-label">TRIGGER</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- Burst Count Options (visible in burst mode) -->
+          <div class="burst-controls" id="burst-controls" style="display: none;">
+            <label class="setting-label">Burst Count:</label>
+            <div class="burst-pills" id="burst-count-pills">
+              <button class="chip-pill active" data-count="3">3 Shots</button>
+              <button class="chip-pill" data-count="5">5 Shots</button>
+              <button class="chip-pill" data-count="10">10 Shots</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timelapse / Intervalometer Arena -->
+        <div class="timelapse-arena" id="timelapse-arena" style="display: none;">
+          <div class="timelapse-grid">
+            <div class="tl-input-card">
+              <label class="tl-label">Interval (Seconds)</label>
+              <div class="num-stepper">
+                <button class="step-btn" id="tl-int-dec">-</button>
+                <input type="number" id="tl-interval-input" min="1" max="3600" value="5" step="1" class="tl-input">
+                <button class="step-btn" id="tl-int-inc">+</button>
+              </div>
+            </div>
+
+            <div class="tl-input-card">
+              <label class="tl-label">Target Frames (0 = Infinite)</label>
+              <div class="num-stepper">
+                <button class="step-btn" id="tl-count-dec">-</button>
+                <input type="number" id="tl-count-input" min="0" max="10000" value="60" step="10" class="tl-input">
+                <button class="step-btn" id="tl-count-inc">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Timelapse Monitor -->
+          <div class="tl-monitor" id="tl-monitor" style="display: none;">
+            <div class="tl-progress-bar-wrap">
+              <div class="tl-progress-bar-fill" id="tl-progress-fill"></div>
+            </div>
+            <div class="tl-stats-row">
+              <div class="tl-stat-item">
+                <span class="tl-stat-val" id="tl-stat-taken">0</span>
+                <span class="tl-stat-lbl">Actuations</span>
+              </div>
+              <div class="tl-stat-item">
+                <span class="tl-stat-val" id="tl-stat-target">60</span>
+                <span class="tl-stat-lbl">Target</span>
+              </div>
+              <div class="tl-stat-item">
+                <span class="tl-stat-val" id="tl-stat-elapsed">00:00</span>
+                <span class="tl-stat-lbl">Elapsed</span>
+              </div>
+            </div>
+          </div>
+
+          <button id="btn-timelapse-toggle" class="btn-primary-action">
+            ▶ Start Timelapse
+          </button>
+        </div>
+
+        <!-- Real-time Shutter Feedback Banner -->
+        <div id="capture-status-banner" class="capture-banner" style="display: none;">
+          <span class="banner-icon" id="banner-icon">⚡</span>
+          <span class="banner-text" id="banner-text">Shutter Fired</span>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer System Info -->
+    <footer class="app-footer">
+      <div class="system-stats">
+        <span class="sys-item"><strong>Target:</strong> Camera SD Card</span>
+        <span class="sys-item"><strong>Driver:</strong> <span id="sys-driver">Wired USB</span></span>
+      </div>
+      <div class="footer-copy">CamCam Wired USB Shutter Suite</div>
+    </footer>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

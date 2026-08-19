@@ -1,0 +1,3 @@
+"""
+CamCam test suite.
+"""

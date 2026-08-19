@@ -1,0 +1,15 @@
+[Unit]
+Description=CamCam Nikon D3100 Wireless Shutter & Auto-Capture Service
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/camcam
+Environment="PATH=/home/pi/camcam/venv/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=/home/pi/camcam/venv/bin/python3 -m camcam serve --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
