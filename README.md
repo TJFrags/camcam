@@ -63,3 +63,19 @@ python -m camcam shutter --count 3
 # Trigger every 5 seconds for 100 frames
 python -m camcam timelapse --interval 5.0 --count 100
 ```
+
+---
+
+## 📡 Field / Outdoor Wi-Fi Hotspot (Access Point Mode)
+
+When shooting outdoors or in the field without any home router or internet access, turn your Raspberry Pi into its own Wi-Fi Hotspot.
+
+Run on your Raspberry Pi:
+```bash
+sudo chmod +x scripts/setup_hotspot.sh
+sudo ./scripts/setup_hotspot.sh
+```
+
+1. Connect your smartphone/tablet to Wi-Fi network: **`CamCam-WiFi`** (Password: `camcam1234`).
+2. Open your browser to: **`http://192.168.4.1:8000`** (or **`http://camcam.local:8000`**).
+
