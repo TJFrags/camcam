@@ -6,7 +6,7 @@
 #
 # Default SSID:     CamCam-WiFi
 # Default Password: camcam1234
-# Fixed URL:        http://10.42.0.1:8000  (or http://camcam.local:8000)
+# Fixed URL:        http://camcam (or http://camcam.local:8000, http://cam.box)
 # ==============================================================================
 
 set -e
@@ -15,11 +15,11 @@ HOTSPOT_SSID="${1:-CamCam-WiFi}"
 HOTSPOT_PASS="${2:-camcam1234}"
 
 echo "================================================================="
-echo "   📡 CamCam - Standalone Wi-Fi Hotspot Setup"
+echo "   📡 CamCam - Standalone Wi-Fi Hotspot & Custom URL Setup"
 echo "================================================================="
 echo "SSID:     $HOTSPOT_SSID"
 echo "Password: $HOTSPOT_PASS"
-echo "URL:      http://10.42.0.1:8000 (or http://camcam.local:8000)"
+echo "URL:      http://camcam (or http://cam.box, http://10.42.0.1:8000)"
 echo "================================================================="
 
 if [ "$EUID" -ne 0 ]; then
@@ -27,20 +27,41 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Ensure Wi-Fi is unblocked
-echo "[*] Unblocking Wi-Fi radio..."
+# 1. Set System Hostname to camcam
+echo "[1/5] Setting system hostname to 'camcam'..."
+hostnamectl set-hostname camcam || true
+if ! grep -q "127.0.1.1.*camcam" /etc/hosts; then
+    echo "127.0.1.1 camcam" >> /etc/hosts
+fi
+
+# 2. Ensure Wi-Fi is unblocked
+echo "[2/5] Unblocking Wi-Fi radio..."
 rfkill unblock wifi 2>/dev/null || true
 
-# Find wireless interface
+# 3. Find wireless interface
 WLAN_IF=$(iw dev | awk '$1=="Interface"{print $2}' | head -n 1)
 if [ -z "$WLAN_IF" ]; then
     WLAN_IF="wlan0"
 fi
 echo "[*] Using Wi-Fi interface: $WLAN_IF"
 
-# Detect if NetworkManager (nmcli) is available (Standard on Raspberry Pi OS Bookworm & Bullseye)
+# 4. Configure DNS name mapping (camcam, cam.box -> Hotspot IP)
+echo "[3/5] Configuring local DNS entries for http://camcam and http://cam.box..."
+mkdir -p /etc/NetworkManager/dnsmasq-shared.d 2>/dev/null || true
+cat <<EOF > /etc/NetworkManager/dnsmasq-shared.d/camcam.conf 2>/dev/null || true
+address=/camcam/10.42.0.1
+address=/camcam.local/10.42.0.1
+address=/cam.box/10.42.0.1
+EOF
+
+# Restart Avahi mDNS daemon if present
+if command -v avahi-daemon >/dev/null 2>&1; then
+    systemctl restart avahi-daemon 2>/dev/null || true
+fi
+
+# 5. Detect if NetworkManager (nmcli) is available (Standard on Raspberry Pi OS Bookworm & Bullseye)
 if command -v nmcli >/dev/null 2>&1; then
-    echo "[*] Configuring official NetworkManager native hotspot..."
+    echo "[4/5] Configuring official NetworkManager native hotspot..."
 
     # Delete existing hotspot profile if it was partially configured
     nmcli connection delete "Hotspot" 2>/dev/null || true
@@ -54,7 +75,7 @@ if command -v nmcli >/dev/null 2>&1; then
 
 else
     # Fallback for legacy Raspberry Pi OS (dhcpcd + hostapd + dnsmasq)
-    echo "[*] Configuring hostapd & dnsmasq fallback..."
+    echo "[4/5] Configuring hostapd & dnsmasq fallback..."
     apt-get update && apt-get install -y hostapd dnsmasq
 
     systemctl stop hostapd || true
@@ -77,6 +98,7 @@ EOF
     cat <<EOF > /etc/dnsmasq.d/camcam-hotspot.conf
 interface=$WLAN_IF
 dhcp-range=192.168.4.10,192.168.4.50,255.255.255.0,24h
+address=/camcam/192.168.4.1
 address=/camcam.local/192.168.4.1
 address=/cam.box/192.168.4.1
 EOF
@@ -110,18 +132,22 @@ EOF
     HOTSPOT_IP="192.168.4.1"
 fi
 
+# 6. Setup port 80 -> 8000 forwarding so you don't even need to type :8000
+echo "[5/5] Enabling Port 80 -> Port 8000 automatic redirect..."
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8000 2>/dev/null || true
+
 echo ""
 echo "================================================================="
-echo "   🎉 CamCam Wi-Fi Hotspot is now BROADCASTING!"
+echo "   🎉 Custom URL Setup Complete!"
 echo "================================================================="
-echo "1. On your phone: Go to Wi-Fi settings"
-echo "2. Connect to:    '$HOTSPOT_SSID'"
-echo "3. Password:      '$HOTSPOT_PASS'"
-echo "4. Open Browser:  http://$HOTSPOT_IP:8000"
-echo "                  (or http://camcam.local:8000)"
+echo "1. Connect your phone to: '$HOTSPOT_SSID' (Pass: '$HOTSPOT_PASS')"
+echo "2. In your phone's browser, open ANY of these:"
 echo ""
-echo "Troubleshooting Tips if phone doesn't connect:"
-echo " - 'Forget' any existing '$HOTSPOT_SSID' saved on your phone."
-echo " - Turn off 'Mobile Data / 4G / 5G' on your phone while testing."
-echo " - If prompted 'No Internet', select 'Stay Connected'."
+echo "      http://camcam"
+echo "      http://cam.box"
+echo "      http://camcam.local:8000"
+echo "      http://$HOTSPOT_IP:8000"
+echo ""
+echo "Tip: On mobile Chrome, type 'http://camcam/' with the trailing slash"
+echo "     so Chrome doesn't treat it as a Google Search query."
 echo "================================================================="
