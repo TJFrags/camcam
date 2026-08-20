@@ -74,7 +74,8 @@ Type=simple
 User=$USER
 WorkingDirectory=$INSTALL_DIR
 Environment="PATH=$INSTALL_DIR/venv/bin:/usr/local/bin:/usr/bin:/bin"
-ExecStart=$INSTALL_DIR/venv/bin/python3 -m camcam serve --host 0.0.0.0 --port 8000
+ExecStart=$INSTALL_DIR/venv/bin/python3 -m camcam serve --host 0.0.0.0 --port 80
+AmbientCapabilities=CAP_NET_BIND_SERVICE
 Restart=always
 RestartSec=3
 
